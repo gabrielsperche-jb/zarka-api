@@ -1,0 +1,39 @@
+{
+	"info": {
+		"_postman_id": "44140174-942f-4328-bcfb-4ca997e061a9",
+		"name": "ZarkaBackend",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "18045153"
+	},
+	"item": [
+		{
+			"name": "Run Workflow",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"connectorName\": \"Classroom\",\r\n    \"requestBody\": {},\r\n    \"requestName\": \"listCourses\",\r\n    \"activity\": \"retrieve\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/sdk/workflow/run",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"sdk",
+						"workflow",
+						"run"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

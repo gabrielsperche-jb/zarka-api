@@ -1,0 +1,4 @@
+com\splitec\repository\ClassroomRepository.class
+com\splitec\domain\ClassroomDomain.class
+com\splitec\service\ClassroomService.class
+com\splitec\Constants.class
