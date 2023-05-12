@@ -1,43 +1,39 @@
 package com.splitec.zarka.domain;
 
-import com.mongodb.MongoClient;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.model.Filters;
+import com.mongodb.BasicDBObject;
 import com.splitec.zarka.pojos.User;
 import com.splitec.zarka.pojos.UserResponse;
 import com.splitec.zarka.utils.JWTUtils;
 import org.bson.Document;
-import org.bson.conversions.Bson;
-import org.bson.types.ObjectId;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 @Service
 public class UserExecutor {
-  MongoClient mongoClient = new MongoClient("localhost", 27017);
-  MongoDatabase database = mongoClient.getDatabase("zarka");
-  MongoCollection<Document> collection = database.getCollection("users");
+
+  @Autowired
+  private MongoTemplate mongoTemplate;
 
   public UserResponse buildUserDocument(JSONObject userInfo) {
     UserResponse response;
     try {
       String username = userInfo.getString("username");
-
-      // Verificar se o usuário já existe antes de criar
       if (userExists(username)) {
-        response = new UserResponse("", "Usuário já existe", "");
+        response = new UserResponse("", "User exists already", "");
       } else {
-        Document userDoc = new Document();
+        BasicDBObject userDoc = new BasicDBObject();
         userDoc.append("usuario", username);
         userDoc.append("senha", userInfo.getString("password"));
 
-        // Inserir o documento e obter o ID gerado pelo MongoDB
-        collection.insertOne(userDoc);
+        mongoTemplate.insert(userDoc, "users");
         String userId = userDoc.get("_id").toString();
         String token = JWTUtils.createToken(userId);
 
-        response = new UserResponse(userId, "Cadastrado com sucesso", token);
+        response = new UserResponse(userId, "User registered successfully", token);
       }
     } catch (Exception e) {
       response = new UserResponse("", e.getLocalizedMessage(), "");
@@ -46,26 +42,28 @@ public class UserExecutor {
   }
 
   private boolean userExists(String username) {
-    Document query = new Document("usuario", username);
-    return collection.countDocuments(query) > 0;
+    Query query = new Query();
+    query.addCriteria(Criteria.where("usuario").is(username));
+    return mongoTemplate.count(query, "users") > 0;
   }
 
   public boolean validateLogin(String username, String password) {
-    Document query = new Document("usuario", username).append("senha", password);
-    return collection.countDocuments(query) > 0;
+    Query query = new Query();
+    query.addCriteria(Criteria.where("usuario").is(username).and("senha").is(password));
+    return mongoTemplate.count(query, "users") > 0;
   }
 
   public Document findUserByUsername(String username) {
-    Document query = new Document("usuario", username);
-    return collection.find(query).first();
+    Query query = new Query();
+    query.addCriteria(Criteria.where("usuario").is(username));
+    return mongoTemplate.findOne(query, Document.class, "users");
   }
 
   public User findUserById(String userId) {
     try {
-      ObjectId objectId = new ObjectId(userId);
-      Bson filter = Filters.eq("_id", objectId);
-
-      Document userDoc = collection.find(filter).first();
+      Query query = new Query();
+      query.addCriteria(Criteria.where("_id").is(userId));
+      Document userDoc = mongoTemplate.findOne(query, Document.class, "users");
 
       if (userDoc != null) {
         String username = userDoc.getString("usuario");
