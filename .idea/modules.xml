@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/chatGPT-connector.iml" filepath="$PROJECT_DIR$/chatGPT-connector.iml" />
+      <module fileurl="file://$PROJECT_DIR$/classroom-connector/classroom-connector.iml" filepath="$PROJECT_DIR$/classroom-connector/classroom-connector.iml" />
+      <module fileurl="file://$PROJECT_DIR$/zarka/zarka.iml" filepath="$PROJECT_DIR$/zarka/zarka.iml" />
+    </modules>
+  </component>
+</project>

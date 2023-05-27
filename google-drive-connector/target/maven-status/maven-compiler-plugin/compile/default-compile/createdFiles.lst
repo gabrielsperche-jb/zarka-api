@@ -1,5 +1,7 @@
-com\splitec\domain\DriveDomain.class
+com\splitec\pojos\ConnectorResponse.class
 com\splitec\service\DriveService.class
-com\splitec\repository\DriveRepository.class
+com\splitec\pojos\ConnectorSchemas.class
 com\splitec\Constants.class
+com\splitec\domain\DriveDomain.class
+com\splitec\repository\DriveRepository.class
 com\splitec\utils\DriveAccountManager.class
