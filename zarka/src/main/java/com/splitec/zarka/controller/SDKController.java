@@ -3,6 +3,8 @@ package com.splitec.zarka.controller;
 import com.splitec.zarka.Constants;
 import com.splitec.zarka.domain.UserExecutor;
 import com.splitec.zarka.domain.WorkflowExecutor;
+import com.splitec.zarka.pojos.ConnectorResponse;
+import com.splitec.zarka.pojos.ConnectorSchemas;
 import com.splitec.zarka.pojos.User;
 import com.splitec.zarka.pojos.UserCredentials;
 import com.splitec.zarka.pojos.UserResponse;
@@ -12,10 +14,13 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -27,15 +32,20 @@ public class SDKController implements Constants {
 
   @PostMapping(value = "/workflow/run")
   public ResponseEntity<Object> runWorkflow(@RequestBody String body, @RequestHeader(AUTHORIZATION) String token) {
+    ConnectorResponse error = new ConnectorResponse();
     try {
       if (JWTUtils.validateToken(token)) {
         JSONArray workflowConfig = new JSONArray(body);
-        String result = executor.executeFlow(workflowConfig);
+        ConnectorResponse result = executor.executeFlow(workflowConfig);
         return new ResponseEntity<>(result, HttpStatus.OK);
       }
-      return new ResponseEntity<>("Invalid Token", HttpStatus.UNAUTHORIZED);
+      error.setErrorMessage("Invalid Token");
+      error.setSuccess(false);
+      return new ResponseEntity<>(error, HttpStatus.UNAUTHORIZED);
     } catch (Exception e) {
-      return new ResponseEntity<>("error", HttpStatus.BAD_REQUEST);
+      error.setErrorMessage(e.getLocalizedMessage());
+      error.setSuccess(false);
+      return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -79,4 +89,23 @@ public class SDKController implements Constants {
     }
   }
 
+  @GetMapping(value = "/connector/schema/{connectorName}/{requestName}")
+  public ResponseEntity<Object> getSchemas(@PathVariable String connectorName,
+                                           @PathVariable String requestName,
+                                           @RequestHeader(AUTHORIZATION) String token) {
+    ConnectorResponse error = new ConnectorResponse();
+    try {
+      if (JWTUtils.validateToken(token)) {
+        ConnectorSchemas response = executor.getSchemas(connectorName, requestName);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+      }
+      error.setErrorMessage("Invalid Token");
+      error.setSuccess(false);
+      return new ResponseEntity<>(error, HttpStatus.UNAUTHORIZED);
+    } catch (Exception e) {
+      error.setErrorMessage(e.getLocalizedMessage());
+      error.setSuccess(false);
+      return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+  }
 }

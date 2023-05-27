@@ -13,7 +13,9 @@ import com.google.cloud.vision.v1.Image;
 import com.google.cloud.vision.v1.ImageAnnotatorClient;
 import com.google.cloud.vision.v1.ImageAnnotatorSettings;
 import com.google.protobuf.ByteString;
+import com.splitec.pojos.ConnectorResponse;
 import com.splitec.utils.DriveAccountManager;
+import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
@@ -26,7 +28,7 @@ public class DriveRepository {
 
   private static final String IMAGE_MIME_TYPE = "image/jpeg";
 
-  public String getFileContentFromFolder(String folderName) throws IOException, GeneralSecurityException {
+  public ConnectorResponse getFileContentFromFolder(String folderName) throws IOException, GeneralSecurityException {
     Drive driveService = DriveAccountManager.getDriveService();
 
     String query = "mimeType='application/vnd.google-apps.folder' and name='" + folderName + "'";
@@ -40,16 +42,23 @@ public class DriveRepository {
     result = driveService.files().list().setQ(query).setFields("nextPageToken, files(id, name, mimeType)").execute();
     List<File> files = result.getFiles();
 
-    String extractedText = "";
+    String extractedText;
+    String finalText = "";
+    ConnectorResponse response = new ConnectorResponse();
     for (File file : files) {
       if (IMAGE_MIME_TYPE.equals(file.getMimeType())) {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         driveService.files().get(file.getId()).executeMediaAndDownloadTo(outputStream);
         byte[] imageData = outputStream.toByteArray();
-        extractedText = extractTextFromImage(imageData, DriveAccountManager.getVisionCredential());
+        extractedText = extractTextFromImage(imageData, DriveAccountManager.getVisionCredential()) + " ";
+        finalText = finalText.concat(extractedText);
       }
     }
-    return extractedText;
+    JSONObject objResponse = new JSONObject();
+    objResponse.put("imageContent", finalText);
+    response.setResponse(objResponse.toString());
+    response.setSuccess(true);
+    return response;
   }
 
   public String extractTextFromImage(byte[] imageData, GoogleCredentials credentials) throws IOException {
@@ -59,7 +68,7 @@ public class DriveRepository {
 
     try (ImageAnnotatorClient vision = ImageAnnotatorClient.create(settings)) {
       Image image = Image.newBuilder().setContent(ByteString.copyFrom(imageData)).build();
-      Feature feature = Feature.newBuilder().setType(Feature.Type.TEXT_DETECTION).build();
+      Feature feature = Feature.newBuilder().setType(Feature.Type.DOCUMENT_TEXT_DETECTION).build();
       AnnotateImageRequest request = AnnotateImageRequest.newBuilder().addFeatures(feature).setImage(image).build();
       List<AnnotateImageRequest> requests = new ArrayList<>();
       requests.add(request);

@@ -1,0 +1,6 @@
+com\splitec\domain\ChatGPTDomain.class
+com\splitec\service\ChatGPTService.class
+com\splitec\pojos\ConnectorResponse.class
+com\splitec\repository\ChatGPTRepository.class
+com\splitec\pojos\ConnectorSchemas.class
+com\splitec\Constants.class

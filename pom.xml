@@ -19,5 +19,6 @@
         <module>zarka</module>
         <module>google-drive-connector</module>
         <module>classroom-connector</module>
+        <module>chatGPT-connector</module>
     </modules>
 </project>
