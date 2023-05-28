@@ -14,13 +14,13 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -30,6 +30,7 @@ public class SDKController implements Constants {
   @Autowired
   private UserExecutor userExecutor;
 
+  @CrossOrigin(origins = "http://localhost:8080")
   @PostMapping(value = "/workflow/run")
   public ResponseEntity<Object> runWorkflow(@RequestBody String body, @RequestHeader(AUTHORIZATION) String token) {
     ConnectorResponse error = new ConnectorResponse();
@@ -49,6 +50,7 @@ public class SDKController implements Constants {
     }
   }
 
+  @CrossOrigin(origins = "http://localhost:8080")
   @PostMapping(value = "/workflow/token")
   public ResponseEntity<Object> createToken(@RequestBody String body) {
     try {
@@ -60,6 +62,7 @@ public class SDKController implements Constants {
     }
   }
 
+  @CrossOrigin(origins = "http://localhost:8080")
   @PostMapping(value = "/user/create")
   public ResponseEntity<Object> saveUser(@RequestBody String body) {
     try {
@@ -72,6 +75,7 @@ public class SDKController implements Constants {
     }
   }
 
+  @CrossOrigin(origins = "http://localhost:8080")
   @PostMapping(value = "/user/login")
   public ResponseEntity<Object> login(@RequestBody UserCredentials credentials, @RequestHeader(AUTHORIZATION) String token) {
     try {
@@ -89,6 +93,7 @@ public class SDKController implements Constants {
     }
   }
 
+  @CrossOrigin(origins = "http://localhost:8080")
   @GetMapping(value = "/connector/schema/{connectorName}/{requestName}")
   public ResponseEntity<Object> getSchemas(@PathVariable String connectorName,
                                            @PathVariable String requestName,
