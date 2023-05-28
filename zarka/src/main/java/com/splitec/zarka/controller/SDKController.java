@@ -30,7 +30,7 @@ public class SDKController implements Constants {
   @Autowired
   private UserExecutor userExecutor;
 
-  @CrossOrigin(origins = "http://localhost:8080")
+  @CrossOrigin(origins = "https://zarkaweb.herokuapp.com")
   @PostMapping(value = "/workflow/run")
   public ResponseEntity<Object> runWorkflow(@RequestBody String body, @RequestHeader(AUTHORIZATION) String token) {
     ConnectorResponse error = new ConnectorResponse();
@@ -50,7 +50,7 @@ public class SDKController implements Constants {
     }
   }
 
-  @CrossOrigin(origins = "http://localhost:8080")
+  @CrossOrigin(origins = "https://zarkaweb.herokuapp.com/")
   @PostMapping(value = "/workflow/token")
   public ResponseEntity<Object> createToken(@RequestBody String body) {
     try {
@@ -62,7 +62,7 @@ public class SDKController implements Constants {
     }
   }
 
-  @CrossOrigin(origins = "http://localhost:8080")
+  @CrossOrigin(origins = "https://zarkaweb.herokuapp.com/")
   @PostMapping(value = "/user/create")
   public ResponseEntity<Object> saveUser(@RequestBody String body) {
     try {
@@ -75,7 +75,7 @@ public class SDKController implements Constants {
     }
   }
 
-  @CrossOrigin(origins = "http://localhost:8080")
+  @CrossOrigin(origins = "https://zarkaweb.herokuapp.com/")
   @PostMapping(value = "/user/login")
   public ResponseEntity<Object> login(@RequestBody UserCredentials credentials, @RequestHeader(AUTHORIZATION) String token) {
     try {
@@ -93,7 +93,7 @@ public class SDKController implements Constants {
     }
   }
 
-  @CrossOrigin(origins = "http://localhost:8080")
+  @CrossOrigin(origins = "https://zarkaweb.herokuapp.com/")
   @GetMapping(value = "/connector/schema/{connectorName}/{requestName}")
   public ResponseEntity<Object> getSchemas(@PathVariable String connectorName,
                                            @PathVariable String requestName,
